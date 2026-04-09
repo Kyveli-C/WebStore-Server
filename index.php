@@ -102,9 +102,9 @@ session_start();
 		
 	echo "<div class='offer1'>";
 	
-	echo "<li>".$row["offer_id"]. "</li>";
-	echo "<li>".$row["offer_title"]. "</li>";
-	echo "<li>".$row["offer_desc"]. "</li>";
+	
+	echo "<li style='color:brown; font-weight:bold; font-size:25px;'>".$row["offer_title"]. "</li>";
+	echo "<li>".htmlspecialchars($row["offer_desc"]). "</li>";
 	echo '<br>';
 	echo "</div>";
 	}
@@ -155,6 +155,10 @@ session_start();
    
 	 </footer>
 
+    <script src="javascript.js"> 
+
+
+</script>
 
     </body>
 
