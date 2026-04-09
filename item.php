@@ -72,13 +72,17 @@ session_start();
 	 {
 		 $id=$_GET['id'];
 	 }
+	 else
+	 {
+		 $id=0;
+	 }
 	 
 	 $myReviews = "SELECT * FROM tbl_reviews WHERE product_id=$id";
 	 $review = mysqli_query($connection, $myReviews);
 	
 	$myResults = "SELECT * FROM tbl_products WHERE product_id=$id";
 	 $result = mysqli_query($connection, $myResults);
-
+	 
 	
 	while($row = mysqli_fetch_array($result, MYSQLI_ASSOC))
 	{
@@ -86,12 +90,22 @@ session_start();
 	echo "<div class='products'>";
 	
 	//echo "<div>".$row["product_id"]. "</div>";
-	echo "<div>".$row["product_title"]. "</div>";
-	echo "<div>£".$row["product_price"]. "</div>";
-	echo "<div>".$row["product_stock"]. "</div>";
-	echo "<div>".$row["product_desc"]. "</div>";
+	echo "<div>".htmlspecialchars($row["product_title"]). "</div>";
+	echo "<div>£".htmlspecialchars($row["product_price"]). "</div>";
+	echo "<div>".htmlspecialchars($row["product_stock"]). "</div>";
+	echo "<div>".htmlspecialchars($row["product_desc"]). "</div>";
 	echo "<div><img src='".$row["product_src"]."' style='width:150px; height:auto;'></div>";
-	echo "<div><button id='cartButton' onclick='addToCart(" .$row["product_id"].")'>Add to Cart</button></div>";
+	 if (isset($_SESSION['user_id']))
+			{
+				echo "<div><button id='cartButton' onclick='addToCart(" .$row["product_id"].")'>Add to Cart</button></div>";
+			}
+			else
+			{
+				echo "You must be logged in to add this item to your cart";
+				echo '<br>';
+			echo '<a href="logIn.php">Sign In</a>';			 
+
+			}
     echo '<br>';
 	echo "</div>";
 }
@@ -108,65 +122,153 @@ session_start();
 	echo "<div class='reviews'>";
 
 	echo "<div>".htmlspecialchars($row1["review_title"]). "</div>";
-	echo "<div>".$row1["review_desc"]. "</div>";
-	echo "<div>".$row1["review_rating"]. "/5</div>";
+	echo "<div>".htmlspecialchars($row1["review_desc"]). "</div>";
+	echo "<div>".htmlspecialchars($row1["review_rating"]). "/5</div>";
+	//$finalScore+=($row1["review_rating"]);
+
 	if ($row1["review_rating"]==1)
 	{
-		echo "<div>*</div>";
+		echo "<div>★✰✰✰✰</div>";
 	}
 	else if ($row1["review_rating"]==2)
 	{
-		echo "<div>**</div>";
+		echo "<div>★★✰✰✰</div>";
 	}
 	else if ($row1["review_rating"]==3)
 	{
-		echo "<div>***</div>";
+		echo "<div>★★★✰✰</div>";
 	}
 	else if ($row1["review_rating"]==4)
 	{
-		echo "<div>****</div>";
+		echo "<div>★★★★✰</div>";
 	}
 	else if ($row1["review_rating"]==5)
 	{
-		echo "<div>*****</div>";
+		echo "<div>★★★★★</div>";
 	}
 	echo "<div>".$row1["review_timestamp"]. "</div>";
+	
     echo '<br>';
 	echo "</div>";
-
-	
 	}
+	
+	echo '<br>';
+	 
+	 	
 ?>  
-<br> <br>
-		   
-	<!--	   <form method="post" action="item.php" id="giveReview" name="giveReview">
-		   <label> Leave a rating (/5) </label>
-		    <input type="number" name="scoreByUser" min="1" max="5">
-		    <input type="text" name="reviewTitle">
-		    <input type="text" name="reviewByUser">
-			<button type="submit" name="submitReview">Submit</button>
+ 
+<?php
 
-		   </form>
-		   
-		   
-		  /*
-		   
-		   if (isset($_POST["giveReview"]))
+$numberOfReviews = "SELECT AVG(review_rating) AS avgRating FROM tbl_reviews WHERE product_id=$id";
+ $number = mysqli_query($connection, $numberOfReviews);
+ 
+ if($rowAverage=mysqli_fetch_assoc($number))
+ {
+ $averageRating=round($rowAverage['avgRating']*2)/2; //in case it's not a whole number
+	 echo "Score:".number_format($averageRating,1). "/5"; //1 decimal place
+	
+	if ($rowAverage["avgRating"]==1)
+	{
+		echo "div>★</div>";
+	}
+	else if ($rowAverage["avgRating"]==1.5)
+	{
+		echo "<div>★⯪</div>";
+	}
+	else if ($rowAverage["avgRating"]==2)
+	{
+		echo "<div>★★</div>";
+	}
+	else if ($rowAverage["avgRating"]==2.5)
+	{
+		echo "<div>★★⯪</div>";
+	}
+	else if ($rowAverage["avgRating"]==3)
+	{
+		echo "<div>★★★</div>";
+	}
+	else if ($rowAverage["avgRating"]==3.5)
+	{
+		echo "<div>★★★⯪</div>";
+	}
+	else if ($rowAverage["avgRating"]==4)
+	{
+		echo "<div>★★★★</div>";
+	}
+	else if ($rowAverage["avgRating"]==4.5)
+	{
+		echo "<div>★★★★⯪</div>";
+	}
+	else if ($rowAverage["avgRating"]==5)
+	{
+		echo "<div>★★★★★</div>";
+	}
+ }
+ else
+ {
+	 echo "No reviews yet";
+ }
+
+
+?>
+<br> <br> 
+              
+    <?php
+	
+	echo "Rate the product:";
+		    if (isset($_SESSION['user_id']))
+			{
+		  echo '<form method="post" action=""+product_id id="giveReview" name="giveReview">
+		   <br>
+		    <input type="number" name="scoreByUser" min="1" max="5" placeholder="(/5)">
+		 <br> <br>  <input type="text" name="reviewTitle" placeholder="Review Title">
+		  <br> <br>  <input type="text" name="reviewByUser" placeholder="Describe the product">
+		  <br> <br>  <input type="hidden" name="productId" value="'. $id.'">
+			<br> <button type="submit" name="submitReview">Submit Review</button>
+
+		   </form>';
+			}
+		   else
 		   {
-			   $rating=$_POST["scoreByUser"];
+			  echo '<br>';
+			  echo "Please Log in to Review";
+			  echo '<br>';
+			  echo '<a href="logIn.php">Sign In</a>';			 
+
+		   }
+		   
+		 
+		   if (isset($_POST["submitReview"]))
+		   {
+				   if(!isset($_SESSION['user_id']))
+				   {
+					   echo "You must be logged in to leave a review";
+					   $userID=0;
+				   }
+				  else
+			       {
+			     $userID=$_SESSION['user_id'];
+		           }
+			  
+			  
+			   $rating=(int)$_POST["scoreByUser"];
 			   $reviewTitle=$_POST["reviewTitle"];
 			   $reviewDesc=$_POST["reviewByUser"];
 			   
-			   $userID=$_SESSION['userID'];
-			   $productId=$_GET['id'];
+			   $userID=$_SESSION['user_id'];
+			   $productId=$_POST['productId'];
 		   
-        $insert_sql = 'INSERT INTO tbl_reviews (review_id,user_id,product_id,review_title,review_desc,review_rating,review_timestamp) VALUES (?,?,?,?,?,?,?)';
-        $insert_stmt = mysqli_prepare($conn, $insert_sql);
-        mysqli_stmt_bind_param($insert_stmt, 'is', $rating,$reviewDesc);
-		 mysqli_stmt_execute($insert_stmt);
-		   }
+		  
+		   
+        $insert_sql = 'INSERT INTO tbl_reviews (user_id,product_id,review_title,review_desc,review_rating,review_timestamp) VALUES (?,?,?,?,?,NOW())';
+        $insert_stmt = mysqli_prepare($connection, $insert_sql);
+        mysqli_stmt_bind_param($insert_stmt, 'iissi', $userID,$productId,$reviewTitle,$reviewDesc,$rating);
+		mysqli_stmt_execute($insert_stmt);
+		}
+		echo '<br>';
 		
-?> */
+		
+?>
 
 
 	  <!-- Footer -->
@@ -181,27 +283,8 @@ session_start();
    
 	 </footer>
 
-    <script>
+    <script src="javascript.js">
 
-		function addToCart(product_id)
-{
-   window.location.href="cart.php";
-    
-    alert('Added to cart!');
-}
-
-		function toggleMenu(){
- 
-	let menu=document.getElementsByClassName("fullScreen")[0]; //returns the first element -otherwise=undefinied
-	if (menu.style.display === 'flex') 
-	{
-	  menu.style.display = "none";
-	}
-	else 
-	{
-	  menu.style.display = "flex"
-	 }
-}
 
 	</script>
 
