@@ -52,61 +52,104 @@ session_start();
   
      <h1 class="titleProducts"> Online Shop </h1>
       <br>
-	   
-	   <select id="stockFilter"  >
-		  <option value="all">All</option>
+	  
+	  
+	  <form id="filterForm" method="post" action="products.php">
+	  <select id="stockFilter" name="stockFilter" >
+		  <option value="Show Stock">Stock</option>
 		  <option value="out-of-stock">Out of Stock </option>
-		  <option value="good-stock">Good Stock </option>
-		  <option value="last-few">Last Few </option>
+		  <option value="limited-stock">Limited Stock </option>
+		  <option value="available">Available </option>
+		  <option value="all">ALL </option>
 
 	   </select>
-
-
+       
+     </form>
 	 <br><br>
 	 
-	 <?php
-	   
-
+	  
+	  <?php
+	  
+	  
 	$connection = mysqli_connect("localhost", "kchristoforou",
             "sNwnZnVNH5", "kchristoforou");
-
-     if (mysqli_connect_errno())
+	
+	if (mysqli_connect_errno())
      {
     echo "ERROR: could not connect to database: " . mysqli_connect_error();
-       }
+	 }
+	
+       
       
-	 
-	 echo '<br>';
-	 
-	 
-	 $myQuery = "SELECT * FROM tbl_products";
-	 
-	 
-	 $result = mysqli_query($connection, $myQuery);
-	 
+ if (isset($_POST['stockFilter']))
+	 {
+	 $filter=$_POST['stockFilter'];
+	 }
+	 else
+	 {
+	  $filter="all";
+	 }
 
-	echo "<div class='products-container'>";
+ 
+	 if($filter==="all")
+	 {
+	 $myQuery = "SELECT * FROM tbl_products";
+	 }
+	 else if($filter==="limited-stock")
+	 {
+	$myQuery = "SELECT * FROM tbl_products WHERE product_desc LIKE '%Limited stock%' ";	 
+	 }
+	 else if($filter==="available")
+	 {
+	$myQuery = "SELECT * FROM tbl_products WHERE product_desc LIKE '%Perfect%' ";	 
+	 }
+	  else if($filter==="out-of-stock")
+	 {
+	$myQuery = "SELECT * FROM tbl_products WHERE product_desc LIKE '%Unfortunately%' ";	 
+	 }	 
+	 else if($filter==="all")
+	 {
+	 $myQuery = "SELECT * FROM tbl_products";
+	 }
+	 
+	 	$result = mysqli_query($connection, $myQuery);
+
+	 ?>
+	 
+	 
+	 <div class='products-container'>
+	 
+	 <?php
 
      while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC))
 	{
 		
 	echo "<div class='products'>";
-	
-	echo "<div>".$row["product_id"]. "</div>";
-	echo "<div>".$row["product_title"]. "</div>";
-	echo "<div>".$row["product_price"]. "</div>";
-	echo "<div>".$row["product_stock"]. "</div>";
-	echo "<div>".$row["product_desc"]. "</div>";
-	echo "<div><img src='".$row["product_src"]."'></div>";
+	echo "<div>".htmlspecialchars($row["product_title"]). "</div>";
+	echo "<div>£".htmlspecialchars($row["product_price"]). "</div>";
+	echo "<div>".htmlspecialchars($row["product_stock"]). "</div>";
+	echo "<div>".htmlspecialchars($row["product_desc"]). "</div>";
+	echo "<div><img src='".$row["product_src"]."' style='width:150px; height:auto;'></div>";
+	echo "<div><button id='detailsButton' onclick='viewDetails(" .$row ["product_id"].")'>View Details</button></div>";
+     if (isset($_SESSION['user_id']))
+			{
+				echo "<div><button id='cartButton' onclick='addToCart(" .$row["product_id"].")'>Add to Cart</button></div>";
+			}
+			else
+			{
+				echo "You must be logged in to add this item to your cart";
+				echo '<br>';
+			echo '<a href="logIn.php">Sign In</a>';			 
+
+			}
 	echo '<br>';
 	echo "</div>";
 	}
-	echo "</div>";
 ?>
+</div>
 	   
 
-	<div id="products"></div>
-    <div id='productList'></div>
+
 
 
 	<!-- Buttons -->
@@ -125,12 +168,11 @@ session_start();
 
 	 </footer>
 
-    <script src="javascript.js"></script>
-
-	
-	<script>displayProducts(products);</script>
-    <script>showProducts();</script>
-
+  
+    <script src="javascript.js">
+	</script>
+ 
+ 
 	   
 	</body>
 
