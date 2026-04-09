@@ -137,15 +137,20 @@ footer{
 }
 
 .offer1{
-	border: 3px solid #191970;
-	margin:5px;
+	border: 3px solid #d85f0c;
+	margin:15px;
 	display:grid;
-	background-color:#B0E0E6;
+	background-color:#d3ad13;
+	padding:5px;
+	padding-top:20px;
 	padding-left:10px;
 	text-align:center;
-	font-size:25px;
+	font-size:15px;
 	border-radius: 25px;
+	color:#560707;
+	box-shadow:gray 10px 10px 10px;
 }
+
 
 
 .offer1 li{
@@ -178,30 +183,54 @@ footer{
 *****************************************************************************/
 
 .titleProducts{
-	color:#BE1622;
+	color:#631E26;
 	text-align:center;
 	font-family:Roboto;
 	font-size:40px;
 	font-weight:bold;	
 }
 
-.products-container{
-display:grid;	
+.products-container img{
+width:50%;
+height:150px;
 }
 
 
 .products {
-   border: 3px solid red;
+   border: 5px solid #4D1C22;
 	margin:5px;
 	background-color:white;
-	padding-left:10px;
+	padding:15px;
 	text-align:center;
-	font-size:25px;
+	font-size:20px;
 	border-radius: 25px;
 }
-		
+
+.reviews
+{
+	border: 3px solid #5e0606;
+	margin:5px;
+	background-color:#a05e5e;
+	padding:10px;
+	text-align:center;
+	font-size:15px;
+	color:#dbc0c0;
+	border-radius:15px;
+}		
+#giveReview {
+background-color:#c7b8ca;	
+}
+
+#giveReview input[type=number]{
+background-color:#4a7676;	
+}
+
+#giveReview input[type=text]{
+background-color::#4a7676;	
+}
+
 #cartButton{
-	background-color:#006250;
+	background-color:#4D1C22;
 	color:white;
 	padding:15px;
 	border-radius:5px;
@@ -213,7 +242,7 @@ display:grid;
 }
 
 #detailsButton{
-	background-color:#006250;
+	background-color:#4D1C22;
 	color:white;
 	padding:5px;
 	border-radius:5px;
@@ -225,14 +254,18 @@ display:grid;
 }
 
 #stockFilter{
-	background-color:#339933;
+	background-color:#1C4D4C;
 	margin-left:50px;
 	color:white;
 	padding:5px;
 	text-align:center;
-	border:3px solid #919CAD;
+	border:3px solid #2B2E40;
 	cursor: pointer;	
+	border-radius:5px;
+	
 }
+
+
 
 /*****************************************************************************
 /******************************CART PAGE*************************************
